@@ -8,7 +8,7 @@ Let's say you're working on an ASP.NET web app and want to create a report of al
 ```csharp
 public ActionResult DownloadReport()
 {
-    IList<IEnumerable<object>> data = new List<IEnumerable<object>>();
+    var data = new List<IEnumerable<object>>();
     
     using(var db = new DataContext())
     {
