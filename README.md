@@ -48,3 +48,4 @@ In this example, the "Customer" values in the Orders tab will be linked to the c
 
 ![links](https://raw.githubusercontent.com/bradwestness/EPPlusEnumerable/master/links.png)
 
+P.S. `DisplayName` and `Display(Name="")` attributes will be used for worksheet names if used on the class, or column headers if used on a property.
