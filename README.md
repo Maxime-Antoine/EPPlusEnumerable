@@ -23,7 +23,7 @@ public ActionResult DownloadReport()
 
 That will give you a nicely-formatted Excel spreadsheet with tabs for both "Users" and "Orders," like so:
 
-![]()
+![output](https://raw.githubusercontent.com/bradwestness/EPPlusEnumerable/master/output.png)
 
 There's also a `SpreadsheetLinkAttribute` class which you can use to generate links between tabs on your spreadsheet.
 
@@ -46,5 +46,5 @@ public class Order
 
 In this example, the "Customer" values in the Orders tab will be linked to the corresponding Customers tab row where the Name is equal to the value of the Order object's Customer property.
 
-![]()
+![links](https://raw.githubusercontent.com/bradwestness/EPPlusEnumerable/master/links.png)
 
