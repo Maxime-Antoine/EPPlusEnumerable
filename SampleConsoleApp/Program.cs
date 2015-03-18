@@ -23,6 +23,7 @@ namespace SampleConsoleApp
                 data.Add(db.Orders.OrderBy(x => x.Customer).ThenByDescending(x => x.Date).ToList());
             }
 
+
             var bytes = Spreadsheet.Create(data);
             File.WriteAllBytes("MySpreadsheet.xlsx", bytes);
 
