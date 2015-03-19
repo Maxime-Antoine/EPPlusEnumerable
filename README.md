@@ -17,7 +17,7 @@ public ActionResult DownloadReport()
     }
     
     var bytes = Spreadsheet.Create(data);
-    return File(bytes, "application/vnd.ms-excel", "MySpreadsheet.xslx");
+    return File(bytes, "application/vnd.ms-excel", "MySpreadsheet.xlsx");
 }
 ```
 
