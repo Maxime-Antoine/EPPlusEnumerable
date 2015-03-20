@@ -12,6 +12,14 @@ namespace EPPlusEnumerable
 {
     public static class Spreadsheet
     {
+        #region Static Fields
+
+        private static readonly char[] _letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToArray();
+
+        private const TableStyles DefaultTableStyle = TableStyles.Medium16;
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -23,9 +31,9 @@ namespace EPPlusEnumerable
         {
             var package = new ExcelPackage();
 
-            foreach (var datum in data)
+            foreach (var collection in data)
             {
-                AddWorksheet(package, datum);
+                AddWorksheet(package, collection);
             }
 
             AddSpreadsheetLinks(package, data);
@@ -90,11 +98,12 @@ namespace EPPlusEnumerable
                         // TODO: potentially add special formatting for other types (images, etc)
 
                         case "icollection`1":
+                            // if the property is another collection, just show the count
                             worksheet.Cells[cell].Value = (value as IEnumerable<object>).Count();
                             break;
 
                         default:
-                            worksheet.Cells[cell].Value = value.ToString();
+                            worksheet.Cells[cell].Value = GetPropertyValue(property, item);
                             break;
                     }
                 }
@@ -106,7 +115,7 @@ namespace EPPlusEnumerable
                 range.AutoFitColumns();
 
                 var table = worksheet.Tables.Add(range, "table_" + worksheetName);
-                table.TableStyle = TableStyles.Medium16;
+                table.TableStyle = GetTableStyle(collectionType);
             }
 
             return worksheet;
@@ -141,6 +150,19 @@ namespace EPPlusEnumerable
             return worksheetName;
         }
 
+        private static TableStyles GetTableStyle(Type collectionType)
+        {
+            var tableStyle = DefaultTableStyle;
+
+            var spreadsheetTableStyleAttribute = collectionType.GetCustomAttribute<SpreadsheetTableStyleAttribute>(true);
+            if (spreadsheetTableStyleAttribute != null)
+            {
+                tableStyle = spreadsheetTableStyleAttribute.TableStyle;
+            }
+
+            return tableStyle;
+        }
+
         private static string GetPropertyName(PropertyInfo property)
         {
             var propertyName = property.Name;
@@ -160,6 +182,31 @@ namespace EPPlusEnumerable
             }
 
             return propertyName;
+        }
+
+        private static string GetPropertyValue(PropertyInfo property, object item)
+        {
+            var value = property.GetValue(item);
+            string valueString = string.Empty;
+
+            var displayFormatAttribute = property.GetCustomAttribute<DisplayFormatAttribute>(true);
+            if (displayFormatAttribute != null)
+            {
+                if (value == null && !string.IsNullOrWhiteSpace(displayFormatAttribute.NullDisplayText))
+                {
+                    valueString = displayFormatAttribute.NullDisplayText;
+                }
+                else if (value != null)
+                {
+                    valueString = string.Format(displayFormatAttribute.DataFormatString, value);
+                }
+            }
+            else if (value != null)
+            {
+                valueString = value.ToString();
+            }
+
+            return valueString;
         }
 
         private static void AddSpreadsheetLinks(ExcelPackage package, IEnumerable<IEnumerable<object>> data)
@@ -265,11 +312,9 @@ namespace EPPlusEnumerable
         /// <returns>The corresponding Excel-style column letter.</returns>
         private static string GetColumnLetter(int column)
         {
-            var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToArray();
-
-            if (column <= letters.Length)
+            if (column <= _letters.Length)
             {
-                return letters[column - 1].ToString();
+                return _letters[column - 1].ToString();
             }
 
             var number = column;
@@ -277,9 +322,9 @@ namespace EPPlusEnumerable
 
             while (number > 0)
             {
-                var remainder = (number - 1) % letters.Length;
-                letter = letters[remainder] + letter;
-                number = (number - remainder) / letters.Length;
+                var remainder = (number - 1) % _letters.Length;
+                letter = _letters[remainder] + letter;
+                number = (number - remainder) / _letters.Length;
             }
 
             return letter;

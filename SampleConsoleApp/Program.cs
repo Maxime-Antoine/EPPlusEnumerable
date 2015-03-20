@@ -1,7 +1,9 @@
 ﻿using EPPlusEnumerable;
+using OfficeOpenXml.Table;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,7 +42,7 @@ namespace SampleConsoleApp
         public string Zip { get; set; }
     }
 
-    [DisplayName("Orders")]
+    [DisplayName("Orders"), SpreadsheetTableStyle(TableStyles.Medium16)]
     public class Order
     {
         public int Number { get; set; }
@@ -50,6 +52,7 @@ namespace SampleConsoleApp
         [SpreadsheetLink("Customer", "Name")]
         public string Customer { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:c}")]
         public decimal Price { get; set; }
 
         public DateTime Date { get; set; }

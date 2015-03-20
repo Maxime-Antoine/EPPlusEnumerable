@@ -17,7 +17,7 @@ public ActionResult DownloadReport()
     }
     
     var bytes = Spreadsheet.Create(data);
-    return File(bytes, "application/vnd.ms-excel", "MySpreadsheet.xslx");
+    return File(bytes, "application/vnd.ms-excel", "MySpreadsheet.xlsx");
 }
 ```
 
@@ -28,7 +28,7 @@ That will give you a nicely-formatted Excel spreadsheet with tabs for both "User
 There's also a `SpreadsheetLinkAttribute` class which you can use to generate links between tabs on your spreadsheet.
 
 ```csharp
-[DisplayName("Orders")]
+[DisplayName("Orders"), SpreadsheetTableStyle(TableStyles.Medium16)]
 public class Order
 {
     public int Number { get; set; }
@@ -38,6 +38,7 @@ public class Order
     [SpreadsheetLink("Customer", "Name")]
     public string Customer { get; set; }
 
+    [DisplayFormat(DataFormatString = "{0:c}")]
     public decimal Price { get; set; }
 
     public DateTime Date { get; set; }
