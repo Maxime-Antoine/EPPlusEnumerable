@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace EPPlusEnumerable
 {
@@ -23,10 +24,10 @@ namespace EPPlusEnumerable
         {
             var package = new ExcelPackage();
 
-            foreach (var datum in data)
+            Parallel.ForEach(data, datum =>
             {
                 AddWorksheet(package, datum);
-            }
+            });
 
             AddSpreadsheetLinks(package, data);
 
@@ -42,10 +43,10 @@ namespace EPPlusEnumerable
         {
             var package = new ExcelPackage();
 
-            foreach (var datum in data)
+            Parallel.ForEach(data, datum =>
             {
                 AddWorksheet(package, datum.Value, datum.Key);
-            }
+            });
 
             AddSpreadsheetLinks(package, data);
 
@@ -94,7 +95,7 @@ namespace EPPlusEnumerable
             }
 
             // add rows (starting with two, since Excel is 1-based and we added a row of column headings)
-            for (var row = 2; row < data.Count() + 2; row++)
+            Parallel.For(2, data.Count(), row =>
             {
                 var item = data.ElementAt(row - 2);
 
@@ -117,7 +118,7 @@ namespace EPPlusEnumerable
                             break;
                     }
                 }
-            }
+            });
 
             // set table formatting
             using (var range = worksheet.Cells[string.Format("A1:{0}{1}", lastColumn, data.Count() + 1)])
