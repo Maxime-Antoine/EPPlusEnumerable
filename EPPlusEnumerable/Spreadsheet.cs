@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace EPPlusEnumerable
 {
@@ -33,6 +34,11 @@ namespace EPPlusEnumerable
             return package.GetAsByteArray();
         }
 
+        public static Task<byte[]> CreateAsync(IEnumerable<IEnumerable<object>> data)
+        {
+            return Task.FromResult(Create(data));
+        }
+
         /// <summary>
         /// Creates an Excel spreadsheet with worksheets for each collection of objects and custom names for worksheets.
         /// </summary>
@@ -52,6 +58,11 @@ namespace EPPlusEnumerable
             return package.GetAsByteArray();
         }
 
+        public static Task<byte[]> CreateAsync(IDictionary<string, IEnumerable<object>> data)
+        {
+            return Task.FromResult(Create(data));
+        }
+
         /// <summary>
         /// Creates an Excel spreadsheet with a single worksheet for the supplied data.
         /// </summary>
@@ -65,6 +76,11 @@ namespace EPPlusEnumerable
             AddSpreadsheetLinks(package, new[] { data });
 
             return package.GetAsByteArray();
+        }
+
+        public static Task<byte[]> CreateAsync(IEnumerable<object> data, string wsName = null)
+        {
+            return Task.FromResult(Create(data, wsName));
         }
 
         #endregion
