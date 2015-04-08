@@ -24,10 +24,11 @@ namespace EPPlusEnumerable
         {
             var package = new ExcelPackage();
 
-            Parallel.ForEach(data, datum =>
+            foreach (var datum in data)
+            //Parallel.ForEach(data, datum =>
             {
                 AddWorksheet(package, datum);
-            });
+            }//);
 
             AddSpreadsheetLinks(package, data);
 
@@ -44,10 +45,11 @@ namespace EPPlusEnumerable
         {
             var package = new ExcelPackage();
 
-            Parallel.ForEach(data, datum =>
+            foreach (var datum in data)
+            //Parallel.ForEach(data, datum =>
             {
                 AddWorksheet(package, datum.Value, datum.Key);
-            });
+            }//);
 
             AddSpreadsheetLinks(package, data);
 
@@ -85,7 +87,7 @@ namespace EPPlusEnumerable
             var collectionType = data.First().GetType();
             var properties = collectionType.GetProperties();
             var worksheetName = wsName ?? GetWorksheetName(collectionType);
-            var worksheet = package.Workbook.Worksheets.Add(worksheetName);
+            var worksheet = package.Workbook.Worksheets[worksheetName] ?? package.Workbook.Worksheets.Add(worksheetName);
             var lastColumn = GetColumnLetter(properties.Count());
 
             // add column headings
@@ -98,7 +100,8 @@ namespace EPPlusEnumerable
             }
 
             // add rows (starting with two, since Excel is 1-based and we added a row of column headings)
-            Parallel.For(2, data.Count(), row =>
+            for (var row = 2; row < data.Count() + 2; row++)
+            //Parallel.For(2, data.Count() + 2, row =>
             {
                 var item = data.ElementAt(row - 2);
 
@@ -121,7 +124,7 @@ namespace EPPlusEnumerable
                             break;
                     }
                 }
-            });
+            }//);
 
             // set table formatting
             using (var range = worksheet.Cells[string.Format("A1:{0}{1}", lastColumn, data.Count() + 1)])
